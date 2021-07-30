@@ -4,11 +4,15 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
+var hbs = require('hbs');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+// Helpers hbs
+hbs.registerHelper('date', () => {return new Date();});
 
 // Mongoose connect
 mongoose.connect('mongodb://localhost:27017/library', {useNewUrlParser: true, useUnifiedTopology: true});
@@ -22,7 +26,7 @@ var company = mongoose.Schema({
 
 var Company = mongoose.model('Company', company);
 
-Company.create({
+/* Company.create({
   name: 'Company 1',
 }, (err, company) => {
   if (err) {
@@ -30,7 +34,7 @@ Company.create({
     return
   }
   console.log('Created ->', company);
-});
+}); */
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
