@@ -1,99 +1,21 @@
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var mongoose = require("mongoose");
-var hbs = require("hbs");
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const hbs = require("hbs");
+const connection = require("./models");
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
+const personRouter = require("./routes/person");
 
-var app = express();
+const app = express();
 
 // Helpers hbs
 hbs.registerHelper("date", () => {
   return new Date();
 });
-
-// Mongoose connect
-mongoose.connect("mongodb://localhost:27017/library", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:")); //() => console.log(`Ops! Something went wrong, mongoDB is broken...`))
-db.once("open", () =>
-  console.log(`Everything is okay, mongoDB is connected...`)
-);
-
-var company = mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  address: {
-    name: String,
-    number: Number,
-    city: String,
-  },
-  date: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
-});
-
-var person = mongoose.Schema({
-  name: {
-    firstname: String,
-    lastname: String,
-  },
-});
-
-person.virtual("name.fullName").get(function () {
-  return this.name.firstname.concat(" ").concat(this.name.lastname);
-});
-
-var Person = mongoose.model("Person", person);
-
-Person.create(
-  {
-    name: {
-      firstname: "Jorge",
-      lastname: "Silveira",
-    },
-  },
-  (err, person) => {
-    if (err) {
-      console.log("Error Person ->", err);
-      return;
-    }
-
-    console.log(`Person Data -> ${person}`);
-    console.log(`Person Fullname -> ${person.name.fullName}`);
-  }
-);
-
-var Company = mongoose.model("Company", company);
-
-Company.create(
-  {
-    name: "Company 1",
-    address: {
-      name: "Address 1",
-      number: 35,
-      city: "Rio de Janeiro",
-    },
-  },
-  (err, company) => {
-    if (err) {
-      console.log("Error ->", err);
-      return;
-    }
-    console.log("Created ->", company);
-  }
-);
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -107,6 +29,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/person", personRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
