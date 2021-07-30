@@ -3,11 +3,34 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+// Mongoose connect
+mongoose.connect('mongodb://localhost:27017/library', {useNewUrlParser: true, useUnifiedTopology: true});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));//() => console.log(`Ops! Something went wrong, mongoDB is broken...`))
+db.once('open', () => console.log(`Everything is okay, mongoDB is connected...`));
+
+var company = mongoose.Schema({
+  name: String
+});
+
+var Company = mongoose.model('Company', company);
+
+Company.create({
+  name: 'Company 1',
+}, (err, company) => {
+  if (err) {
+    console.log('error');
+    return
+  }
+  console.log('Created ->', company);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
