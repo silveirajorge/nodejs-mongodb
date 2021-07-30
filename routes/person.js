@@ -1,6 +1,5 @@
 // const Express = require('express');
 const express = require("express");
-const { response } = require("../app");
 const router = express.Router();
 const Person = require("../models/Person");
 
@@ -23,20 +22,80 @@ router.get("/:id", (request, response) => {
 
     response.send(person);
   });
+});
 
-  // Modo 2
-  /* Person.findOne(
+// Modo 2 - Ideal para buscar registros quando há mais de um parâmetro e/ou quando não há o ID;
+/* router.get("/:id", (request, response) => {
+Person.findOne(
+  {
+    _id: request.params.id,
+  },
+  (err, person) => {
+    if (err) {
+      return;
+    }
+
+    response.send(person);
+  }
+);
+}); */
+
+// Create
+/* router.post("/", (request, response) => {
+  Person.create(
     {
-      _id: request.params.id,
+      name: {
+        firstname: "Alzirene",
+        lastname: "Ferreira",
+      },
+      age: 61,
     },
     (err, person) => {
       if (err) {
         return;
       }
-
       response.send(person);
     }
-  ); */
+  );
+}); */
+
+// Modo 2 - Metodo Save
+router.post("/", (request, response) => {
+  const person = new Person({
+    name: {
+      firstname: "Luiz Paulo",
+      lastname: "Esteves",
+    },
+    age: 30,
+  });
+
+  person.save(person, (err, person) => {
+    if (err) {
+      return;
+    }
+    response.send(person);
+  });
+});
+
+// Update
+router.put("/:id", (request, response) => {
+  Person.findOneAndUpdate(
+    {
+      _id: request.params.id,
+    },
+    {
+      name: {
+        firstname: "Jorge",
+        lastname: "Silveira",
+      },
+    },
+    (err, person) => {
+      if (err) {
+        return;
+      }
+      response.send(person);
+    }
+  );
 });
 
 module.exports = router;
