@@ -78,6 +78,28 @@ router.post("/", (request, response) => {
 });
 
 // Update
+
+// Modo 1 - Encontrar apenas o que corresponde ao ID
+/* router.put("/:id", (request, response) => {
+  Person.findByIdAndUpdate(
+    request.params.id,
+    {
+      name: {
+        firstname: "Giselle",
+        lastname: "Silveira",
+      },
+    },
+    (err, person) => {
+      if (err) {
+        return;
+      }
+
+      response.send(person);
+    }
+  );
+}); */
+
+// Modo 2 - Atualizando pelo parâmetro passado, neste caso, o ID
 router.put("/:id", (request, response) => {
   Person.findOneAndUpdate(
     {
@@ -93,6 +115,22 @@ router.put("/:id", (request, response) => {
       if (err) {
         return;
       }
+
+      response.send(person);
+    }
+  );
+});
+
+router.delete("/:id", (request, response) => {
+  Person.findOneAndRemove(
+    {
+      _id: request.params.id,
+    },
+    (err, person) => {
+      if (err) {
+        return;
+      }
+
       response.send(person);
     }
   );
